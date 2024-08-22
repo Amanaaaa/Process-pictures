@@ -235,7 +235,7 @@ class YOLOv5GUI(QMainWindow):
     def append_to_info_text(self, message):
         self.info_text_edit.append(message)
 
-    def convert_txt_to_xml(self, txt_file_path, xml_file_path):
+   def convert_txt_to_xml(self, txt_file_path, xml_file_path):
         try:
             root = ET.Element('annotation')
 
@@ -250,21 +250,20 @@ class YOLOv5GUI(QMainWindow):
                 for line in f:
                     parts = line.strip().split()
                     if len(parts) == 6:
-                        cls, conf, xmin, ymin, xmax, ymax = parts
-
+                        cls, conf, x1, y1, x2, y2 = map(float, parts)
                         obj = ET.SubElement(root, 'object')
-                        ET.SubElement(obj, 'name').text = cls
-                        ET.SubElement(obj, 'confidence').text = conf
+                        ET.SubElement(obj, 'name').text = str(int(cls))
+                        ET.SubElement(obj, 'confidence').text = f"{conf:.2f}"
+                        bbox = ET.SubElement(obj, 'bndbox')
+                        ET.SubElement(bbox, 'xmin').text = str(int(x1))
+                        ET.SubElement(bbox, 'ymin').text = str(int(y1))
+                        ET.SubElement(bbox, 'xmax').text = str(int(x2))
+                        ET.SubElement(bbox, 'ymax').text = str(int(y2))
 
-                        bndbox = ET.SubElement(obj, 'bndbox')
-                        ET.SubElement(bndbox, 'xmin').text = xmin
-                        ET.SubElement(bndbox, 'ymin').text = ymin
-                        ET.SubElement(bndbox, 'xmax').text = xmax
-                        ET.SubElement(bndbox, 'ymax').text = ymax
-
+            # Write the XML file
             tree = ET.ElementTree(root)
-            tree.write(xml_file_path)
-            self.append_to_info_text(f"转换完成: {xml_file_path}")
+            tree.write(xml_file_path, encoding='utf-8', xml_declaration=True)
+
         except Exception as e:
             self.append_to_info_text(f"Error converting {txt_file_path} to XML: {str(e)}")
 
