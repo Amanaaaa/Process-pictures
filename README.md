@@ -1,6 +1,7 @@
 # Process-pictures
 用于圆盘分割
 
+
 需要现在自己本地配置环境。
 ![1724302402582](https://github.com/user-attachments/assets/2814762c-8f5b-4991-94a9-0453132e12e4)
 
